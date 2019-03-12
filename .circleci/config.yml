@@ -1,0 +1,9 @@
+version: 2
+jobs:
+  build:
+    machine: true
+    working_directory: ~/django-docker-ci
+
+    steps:
+      - checkout
+      - run: docker-compose run app sh -c "python manage.py test && flake8"

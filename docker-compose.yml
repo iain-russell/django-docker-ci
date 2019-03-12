@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  app:
+    build: .
+    restart: always
+    env_file:
+      - django.env
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --no-input &&
+             gunicorn --workers=2 --bind=0.0.0.0:8000 app.wsgi:application"
+
+  db:
+    image: postgres:10-alpine
+
+  nginx:
+    image: nginx:1.14
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - app
